@@ -31,9 +31,32 @@ const getAllPosts = async (req: Request, res: Response) => {
 
 const getPostsStats = async (req: Request, res: Response) => {};
 
-const getMyPosts = async (req: Request, res: Response) => {};
+const getMyPosts = async (req: Request, res: Response) => {
+  const authorId = req.user?.id;
+  const result = await postService.getMyPosts(authorId as string);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "MyPosts Retrived Successfully",
+    data: result,
+  });
+};
 
-const getPostById = async (req: Request, res: Response) => {};
+const getPostById = async (req: Request, res: Response) => {
+  const { postId } = req.params;
+  if (!postId) {
+    throw new Error("Post Id Required In Params ");
+  }
+
+  const result = await postService.getPostById(postId as string);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Post Retrived Successfully",
+    data: result,
+  });
+};
 
 const updatePost = async (req: Request, res: Response) => {};
 
