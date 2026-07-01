@@ -5,6 +5,8 @@ import cors from "cors";
 import config from "./config";
 import { userRoutes } from "./modules/users/user.route";
 import { authRoutes } from "./modules/auth/auth.route";
+import { postRoutes } from "./modules/post/post.route";
+import { commentRoutes } from "./modules/comment/comment.route";
 
 const app: Application = express();
 
@@ -24,6 +26,8 @@ app.get("/", async (req: Request, res: Response) => {
 });
 
 app.use("/api/users", userRoutes);
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes); 
+app.use("/api/post", postRoutes); 
+app.use("/api/comment", commentRoutes); 
 
 export default app;
