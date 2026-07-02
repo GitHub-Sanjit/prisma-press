@@ -1,5 +1,5 @@
 import { prisma } from "../../lib/prisma";
-import { IcreatePostPayload } from "./post.interface";
+import { IcreatePostPayload, IUpdatePostPayload } from "./post.interface";
 
 const createPost = async (payload: IcreatePostPayload, userId: string) => {
   const result = await prisma.post.create({
@@ -69,7 +69,7 @@ const getMyPosts = async (authorId: string) => {
 
       _count: {
         select: {
-          comments: true, 
+          comments: true,
         },
       },
     },
@@ -78,9 +78,62 @@ const getMyPosts = async (authorId: string) => {
   return result;
 };
 
+const updatePost = async (
+  postId: string,
+  payload: IUpdatePostPayload,
+  authorId: string,
+  isAdmin: boolean,
+) => {
+  const post = await prisma.post.findUniqueOrThrow({
+    where: { id: postId },
+  });
+
+  if (!isAdmin && post.authorId !== authorId) {
+    throw new Error("You are not the owner of this post");
+  }
+
+  const result = await prisma.post.update({
+    where: { id: postId },
+    data: payload,
+    include: {
+      author: {
+        omit: {
+          password: true,
+        },
+      },
+      comments: true,
+    },
+  });
+  return result;
+};
+
+const deletePost = async (
+  postId: string,
+  authorId: string,
+  isAdmin: boolean,
+) => {
+  const post = await prisma.post.findUniqueOrThrow({
+    where: { id: postId },
+  });
+
+  if (!isAdmin && post.authorId !== authorId) {
+    throw new Error("You are not the owner of this post");
+  }
+
+  await prisma.post.delete({
+    where: {
+      id: postId,
+    },
+  });
+
+  return null;
+};
+
 export const postService = {
   createPost,
   getAllPosts,
   getPostById,
   getMyPosts,
+  updatePost,
+  deletePost,
 };
