@@ -1,3 +1,4 @@
+import { CommentStatus } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { IcreatePostPayload, IUpdatePostPayload } from "./post.interface";
 
@@ -27,12 +28,6 @@ const getAllPosts = async () => {
 };
 
 const getPostById = async (postId: string) => {
-  const post = await prisma.post.findUniqueOrThrow({
-    where: {
-      id: postId,
-    },
-  });
-
   const updatatedPost = await prisma.post.update({
     where: {
       id: postId,
@@ -42,13 +37,26 @@ const getPostById = async (postId: string) => {
         increment: 1,
       },
     },
+  });
+
+  const post = await prisma.post.findUniqueOrThrow({
+    where: {
+      id: postId,
+    },
     include: {
       author: {
         omit: {
           password: true,
         },
       },
-      comments: true,
+      comments: {
+        where: {
+          status: CommentStatus.APPROVED,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
     },
   });
 
