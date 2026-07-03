@@ -1,4 +1,4 @@
-import { CommentStatus } from "../../../generated/prisma/client";
+import { CommentStatus, PostStatus } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { IcreatePostPayload, IUpdatePostPayload } from "./post.interface";
 
@@ -25,6 +25,47 @@ const getAllPosts = async () => {
   });
 
   return posts;
+};
+
+const getPostsStats = async () => {
+  const transactionResult = await prisma.$transaction(async (tx) => {
+    const totalPost = await tx.post.count();
+    const totalPublishedPost = await tx.post.count({
+      where: { status: PostStatus.PUBLISHED },
+    });
+    const totalDraftedPost = await tx.post.count({
+      where: { status: PostStatus.DRAFT },
+    });
+    const totalArchivedPost = await tx.post.count({
+      where: { status: PostStatus.ARCHIVED },
+    });
+    const totalComment = await tx.comment.count();
+    const totalApprovedComments = await tx.comment.count({
+      where: { status: CommentStatus.APPROVED },
+    });
+    const totalRejectedComments = await tx.comment.count({
+      where: { status: CommentStatus.REJECTED },
+    });
+
+    const totalPostViewsAggregate = await tx.post.aggregate({
+      _sum: { views: true },
+    });
+
+    const totalPostViews = totalPostViewsAggregate._sum.views;
+
+    return {
+      totalPost,
+      totalPublishedPost,
+      totalDraftedPost,
+      totalArchivedPost,
+      totalComment,
+      totalApprovedComments,
+      totalRejectedComments,
+      totalPostViews,
+    };
+  });
+
+  return transactionResult;
 };
 
 const getPostById = async (postId: string) => {
@@ -146,6 +187,7 @@ const deletePost = async (
 export const postService = {
   createPost,
   getAllPosts,
+  getPostsStats,
   getPostById,
   getMyPosts,
   updatePost,
