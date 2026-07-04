@@ -14,6 +14,24 @@ const createPost = async (payload: IcreatePostPayload, userId: string) => {
 
 const getAllPosts = async () => {
   const posts = await prisma.post.findMany({
+    // where: {
+    //   title: "My First Post",
+    //   content: "Ronaldo is the best football player in the world",
+    // },
+
+    where: {
+      AND: [
+        { title: "My First Post" },
+        {
+          contains: "Ronaldo is the best football player in the world",
+        },
+        {
+          tags: {
+            equals: ["sports", "football"],
+          },
+        },
+      ],
+    },
     include: {
       author: {
         omit: {
