@@ -17,7 +17,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/server.ts",
+    "stripe:webhook": "stripe listen --forward-to localhost:5000/api/subscription/webhook"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
@@ -41,6 +42,7 @@
     "http-status": "^2.1.0",
     "jsonwebtoken": "^9.0.3",
     "npm": "^11.17.0",
-    "pg": "^8.22.0"
+    "pg": "^8.22.0",
+    "stripe": "^22.3.0"
   }
 }
