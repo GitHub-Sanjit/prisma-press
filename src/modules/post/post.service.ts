@@ -49,22 +49,33 @@ const getAllPosts = async () => {
     // },
 
     // Combining Search(AND operator) and filtering(OR operator)
-    where: {
-      AND: [
-        {
-          OR: [
-            { title: { contains: "My First Post", mode: "insensitive" } },
-            {
-              content: {
-                contains: "Ronaldo is the best football player in the world",
-                mode: "insensitive",
-              },
-            },
-          ],
-        },
-        { title: "My First Post" },
-        { content: "Ronaldo is the best football player in the world" },
-      ],
+    // where: {
+    //   AND: [
+    //     {
+    //       OR: [
+    //         { title: { contains: "My First Post", mode: "insensitive" } },
+    //         {
+    //           content: {
+    //             contains: "Ronaldo is the best football player in the world",
+    //             mode: "insensitive",
+    //           },
+    //         },
+    //       ],
+    //     },
+    //     { title: "My First Post" },
+    //     { content: "Ronaldo is the best football player in the world" },
+    //   ],
+    // },
+    take: 10,
+    skip: 1, //visiting page 2
+    // skip:   1, //visiting page 3
+    // skip:   1, //
+    // skip:   1,
+    // skip:   1,
+
+    // page = 3, limit / take = 10, skip = (page - 1) * limit = (3 - 1) * 10 = 20
+    orderBy: {
+      createdAt: "desc",
     },
 
     include: {
