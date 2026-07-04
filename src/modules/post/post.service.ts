@@ -19,19 +19,54 @@ const getAllPosts = async () => {
     //   content: "Ronaldo is the best football player in the world",
     // },
 
+    // where: {
+    //   AND: [
+    //     { title: "My First Post" },
+    //     {
+    //       contains: "Ronaldo is the best football player in the world",
+    //     },
+    //     {
+    //       tags: {
+    //         equals: ["sports", "football"],
+    //       },
+    //     },
+    //   ],
+    // },
+
+    // where: {
+    //   title: { contains: "My First Post", mode: "insensitive" },
+    // },
+
+    // where: {
+    //   OR: [
+    //     { title: { contains: "My First Post", mode: "insensitive" } },
+    //     {
+    //       content: {
+    //         contains: "Ronaldo is the best football player in the world",
+    //       },
+    //     },
+    //   ],
+    // },
+
+    // Combining Search(AND operator) and filtering(OR operator)
     where: {
       AND: [
+        {
+          OR: [
+            { title: { contains: "My First Post", mode: "insensitive" } },
+            {
+              content: {
+                contains: "Ronaldo is the best football player in the world",
+                mode: "insensitive",
+              },
+            },
+          ],
+        },
         { title: "My First Post" },
-        {
-          contains: "Ronaldo is the best football player in the world",
-        },
-        {
-          tags: {
-            equals: ["sports", "football"],
-          },
-        },
+        { content: "Ronaldo is the best football player in the world" },
       ],
     },
+
     include: {
       author: {
         omit: {
